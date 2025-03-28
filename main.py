@@ -28,17 +28,30 @@ def get_plex_response(url: str, token: str) -> requests:
         print("\nSuccess! Listing media libraries below.\n")
         return r
 
+def get_lib_key(lib_res: str, lib_type: str = "movie") -> str:
+    """Return section key for a requested library. Defaults to 'movie' if no lib_type provided."""
+    root  = ET.fromstring(lib_res.content)
+
+    for child in root:
+        if child.attrib["type"] == lib_type:
+            print(child.attrib)
+            return child.attrib["key"]
+
+    return f"ERROR - No library found matching type {lib_type}"
+
 def main() -> None:
     """Main function where app logic is run."""
     print_title()
 
     token = input("\nPlease enter your plex token: ")
 
-    content = get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token).content
-    root  = ET.fromstring(content)
+    list_res = get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token)
 
-    for child in root:
-        print(child.tag, child.attrib)
+    lib_key = get_lib_key(list_res)
+
+    lib_res = get_plex_response(f"http://localhost:32400/library/sections/{lib_key}/all?X-Plex-Token=", token)
+
+    print(lib_res)
 
 
 # ===================EXECTUION STARTS HERE===================
