@@ -1,4 +1,5 @@
 """All logic will live in here for now."""
+import xml.etree.ElementTree as ET
 import requests
 
 def print_title(line_length: int = 70) -> None:
@@ -15,8 +16,11 @@ def get_plex_response(url: str, token: str) -> requests:
     token = token.strip()
 
     try:
-        r = requests.get(f"{url}{token.strip()}")
+        r = requests.get(f"{url}{token.strip()}", timeout=10)
         r.raise_for_status()
+    except requests.exceptions.Timeout as err:
+        print("\n ERROR - connection timed out.\n")
+        raise SystemExit(err) from err
     except requests.exceptions.HTTPError as err:
         print(f"\n ERROR - please check token \'{token}\' is correct.\n")
         raise SystemExit(err) from err
@@ -29,7 +33,12 @@ def main() -> None:
     print_title()
 
     token = input("\nPlease enter your plex token: ")
-    print(get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token).content)
+
+    content = get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token).content
+    root  = ET.fromstring(content)
+
+    for child in root:
+        print(child.tag, child.attrib)
 
 
 # ===================EXECTUION STARTS HERE===================
