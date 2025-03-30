@@ -1,5 +1,6 @@
 """All logic will live in here for now."""
 import xml.etree.ElementTree as ET
+import sys
 import requests
 
 def print_title(line_length: int = 70) -> None:
@@ -28,13 +29,12 @@ def get_plex_response(url: str, token: str) -> requests:
         print("\nSuccess! Listing media libraries below.\n")
         return r
 
-def get_lib_key(lib_res: str, lib_type: str = "movie") -> str:
+def get_lib_key(list_res: str, lib_type: str = "movie") -> str:
     """Return section key for a requested library. Defaults to 'movie' if no lib_type provided."""
-    root  = ET.fromstring(lib_res.content)
+    root  = ET.fromstring(list_res.content.decode("utf-8"))
 
     for child in root:
         if child.attrib["type"] == lib_type:
-            print(child.attrib)
             return child.attrib["key"]
 
     return f"ERROR - No library found matching type {lib_type}"
@@ -42,17 +42,15 @@ def get_lib_key(lib_res: str, lib_type: str = "movie") -> str:
 def main() -> None:
     """Main function where app logic is run."""
     print_title()
+    sys.stdout.reconfigure(encoding='utf-8')
+
 
     token = input("\nPlease enter your plex token: ")
 
     list_res = get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token)
-
     lib_key = get_lib_key(list_res)
 
-    lib_res = get_plex_response(f"http://localhost:32400/library/sections/{lib_key}/all?X-Plex-Token=", token)
-
-    print(lib_res)
-
+    print(lib_key)
 
 # ===================EXECTUION STARTS HERE===================
 if __name__ == "__main__":
