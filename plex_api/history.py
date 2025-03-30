@@ -1,4 +1,4 @@
-"""Plex watch history functionality."""
+"""Plex api watch history functionality."""
 from .client import get_plex_response
 
 def get_watch_history(token: str, accountID: str, librarySectionID: str) -> str:

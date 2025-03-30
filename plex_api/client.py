@@ -1,4 +1,4 @@
-"""Base Plex client functionality."""
+"""Base Plex api client functionality."""
 import requests
 
 def get_plex_response(url: str, token: str) -> requests.Response:

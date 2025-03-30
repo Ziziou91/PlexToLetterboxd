@@ -7,6 +7,7 @@ import sys
 from utils.ui import print_title, print_token_instructions
 from plex_api.libraries import get_librarySectionID
 from plex_api.history import get_watch_history
+from plex_api.user import get_users
 
 def main() -> None:
     """Main function where app logic is run."""
@@ -26,8 +27,13 @@ def main() -> None:
 
     root  = ET.fromstring(watch_history_response.content)
 
-    for child in root:
-        print(child.tag, child.attrib)
+    users = get_users(token)
+
+    print("users\n", users)
+
+    # for child in root:
+    #     print(child.tag, child.attrib)
+
 
     # TODO: Add export to Letterboxd functionality
 
