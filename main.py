@@ -1,56 +1,19 @@
-"""All logic will live in here for now."""
+#!/usr/bin/env python3
+"""
+Plex to Letterboxd - Export your Plex watch history as Letterboxd csv format.
+"""
 import xml.etree.ElementTree as ET
 import sys
-import requests
-
-def print_title(line_length: int = 70) -> None:
-    """prints the title of the application."""
-    title = "Plex to Letterboxd"
-    title_spacing = int((line_length / 2) - (len(title) / 2))
-
-    print(f"{'=' * line_length}")
-    print(f"{'-' * title_spacing}{title}{'-' * title_spacing}")
-    print(f"{'=' * line_length}")
-
-def get_plex_response(url: str, token: str) -> requests:
-    """calls a plex server with a given token and prints the response."""
-    token = token.strip()
-
-    try:
-        r = requests.get(f"{url}{token.strip()}", timeout=10)
-        r.raise_for_status()
-    except requests.exceptions.Timeout as err:
-        print("\n ERROR - connection timed out.\n")
-        raise SystemExit(err) from err
-    except requests.exceptions.HTTPError as err:
-        print(f"\n ERROR - please check token \'{token}\' is correct.\n")
-        raise SystemExit(err) from err
-    else:
-        print("\nSuccess! Listing media libraries below.\n")
-        return r
-
-def get_librarySectionID(token: str, lib_type: str = "movie") -> str:
-    """Return section key for a requested library. Defaults to 'movie' if no lib_type provided."""
-    list_res = get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token)
-    root  = ET.fromstring(list_res.content)
-
-    for child in root:
-        if child.attrib["type"] == lib_type:
-            return child.attrib["key"]
-
-    return f"ERROR - No library found matching type {lib_type}"
-
-def get_watch_history(token: str, accountID: str, librarySectionID: str) -> str:
-    """Return list of media watched by a given user in a library."""
-    list_res = get_plex_response(f"http://localhost:32400/status/sessions/history/all?accountId={accountID}&librarySectionID={librarySectionID}&X-Plex-Token=", token)
-
-    return list_res
+from utils.ui import print_title, print_token_instructions
+from plex_api.libraries import get_librarySectionID
+from plex_api.history import get_watch_history
 
 def main() -> None:
     """Main function where app logic is run."""
     sys.stdout.reconfigure(encoding='utf-8')
 
-    print_title()
+    print_title("Plex to Letterboxd")
+    print_token_instructions()
 
     token = input("\nPlease enter your plex token: ")
 
@@ -59,13 +22,14 @@ def main() -> None:
     # TODO - Get list of users - accountId
     # https://plex.tv/api/users?X-Plex-Token=
 
-    watch_history = get_watch_history(token, 1, librarySectionID)
+    watch_history_response  = get_watch_history(token, 1, librarySectionID)
 
-    root  = ET.fromstring(watch_history.content)
+    root  = ET.fromstring(watch_history_response.content)
 
     for child in root:
         print(child.tag, child.attrib)
 
+    # TODO: Add export to Letterboxd functionality
 
 
 # ===================EXECTUION STARTS HERE===================
