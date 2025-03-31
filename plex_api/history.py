@@ -47,3 +47,4 @@ def print_watch_history(ipaddress: str, token: str, librarySectionID: str) -> No
     elif user_str == "cancel":
         print("Exiting program.")
         sys.exit(0)
+

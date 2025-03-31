@@ -21,3 +21,4 @@ def get_librarySectionID(ipaddress: str, token: str, lib_type: str = "movie") ->
             return child.attrib["key"]
 
     return f"ERROR - No library found matching type {lib_type}"
+
