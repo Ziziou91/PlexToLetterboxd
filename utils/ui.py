@@ -1,5 +1,6 @@
 """UI-related utility functions."""
 import math
+from datetime import datetime
 
 def bold_text(text: str) -> str:
     """Returns a bolded string for printing."""
@@ -92,9 +93,9 @@ def create_line(username: str = "USERNAME", email: str = "EMAIL", user_id: str =
     Returns:
         The formatted line string for the table
     """
-    username_cell = create_cell(username, 15)
-    email_cell = create_cell(email, 14)
-    user_id_cell = create_cell(user_id, 14)
+    username_cell = create_cell(username, 20)
+    email_cell = create_cell(email, 18)
+    user_id_cell = create_cell(user_id, 20)
     return f"|{username_cell}|{email_cell}|{user_id_cell}|"
 
 
@@ -110,4 +111,22 @@ def draw_table(users, line_length: int = 90):
     print(f"{'-' * line_length}")
     for user in users:
         print(create_line(user["username"], user["email"], user["id"]))
+        print(f"{'-' * line_length}")
+
+def draw_movie_table(movies, line_length: int = 120):
+    """Prints all the movies watched by a user.
+    
+    Args:
+        users: List of user dictionaries with 'username', 'email', and 'id' keys
+        line_length: Length of the horizontal divider lines (default: 90)
+    """
+    print(f"{'-' * line_length}")
+    print(create_line("title", "", "viewed at"))
+    print(f"{'-' * line_length}")
+    for movie in movies:
+
+        timestamp = int(movie["viewedAt"])
+        dt = datetime.utcfromtimestamp(timestamp)  # Convert to UTC datetime
+        human_readable = dt.strftime('%Y-%m-%d %H:%M:%S')
+        print(create_line(movie["title"], movie["empty"], human_readable))
         print(f"{'-' * line_length}")

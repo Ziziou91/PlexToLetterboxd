@@ -12,7 +12,7 @@ def get_librarySectionID(token: str, lib_type: str = "movie") -> str:
     Returns:
         The library section ID as a string
     """
-    list_res = get_plex_response("http://localhost:32400/library/sections?X-Plex-Token=", token)
+    list_res = get_plex_response("http://81.105.99.73:32400/library/sections?X-Plex-Token=", token)
 
     root  = ET.fromstring(list_res.content)
 

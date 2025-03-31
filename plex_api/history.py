@@ -1,7 +1,7 @@
 """Plex api watch history functionality."""
 import sys
 import xml.etree.ElementTree as ET
-from utils.ui import get_user_selection, draw_table
+from utils.ui import get_user_selection, draw_table, draw_movie_table
 from .client import get_plex_response
 from .user import get_users
 
@@ -16,7 +16,7 @@ def get_watch_history(token: str, accountID: str, librarySectionID: str) -> str:
     Returns:
         Response object containing watch history data
     """
-    url = f"http://localhost:32400/status/sessions/history/all?accountId={accountID}&librarySectionID={librarySectionID}&X-Plex-Token="
+    url = f"http://81.105.99.73:32400/status/sessions/history/all?accountId={accountID}&librarySectionID={librarySectionID}&X-Plex-Token="
     history_response = get_plex_response(url, token)
 
     return history_response
@@ -27,9 +27,18 @@ def print_watch_history(token: str, librarySectionID: str) -> None:
     if user_str == "mine":
         watch_history_response = get_watch_history(token, 1, librarySectionID)
         root = ET.fromstring(watch_history_response.content)
+        
+        movies = []
 
         for child in root:
-            print(child.attrib)
+            movie_data = child.attrib
+            movies.append({
+                "title": movie_data.get("title"),
+                "empty" : "",
+                "viewedAt": movie_data.get("viewedAt")
+            })
+
+        draw_movie_table(movies)
 
     elif user_str == "other":
         users = get_users(token)

@@ -6,6 +6,13 @@ The script calls the Plex API and writes watch history to a CSV file formatted t
 
 ## Requirements
 
+requirements library. Install with the following commands:
+
+Python 2: `sudo pip install requests`
+
+Python 3: `sudo pip3 install requests`
+
+
 ### Installation
 This application requires python3 to run. The following command will check if it's installed:
 
