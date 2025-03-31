@@ -16,9 +16,11 @@ def main() -> None:
 
     token = input("\nPlease enter your plex token: ")
 
-    librarySectionID = get_librarySectionID(token)
+    ipaddress = input("\nPlease enter your plex ip address: ")
 
-    print_watch_history(token, librarySectionID)
+    librarySectionID = get_librarySectionID(ipaddress, token)
+
+    print_watch_history(ipaddress, token, librarySectionID)
 
     # TODO: Add export to Letterboxd functionality
 

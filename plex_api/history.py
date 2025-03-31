@@ -5,7 +5,7 @@ from utils.ui import get_user_selection, draw_table, draw_movie_table
 from .client import get_plex_response
 from .user import get_users
 
-def get_watch_history(token: str, accountID: str, librarySectionID: str) -> str:
+def get_watch_history(ipaddress: str, token: str, accountID: str, librarySectionID: str) -> str:
     """Return list of media watched by a given user in a library.
     
     Args:
@@ -16,16 +16,16 @@ def get_watch_history(token: str, accountID: str, librarySectionID: str) -> str:
     Returns:
         Response object containing watch history data
     """
-    url = f"http://81.105.99.73:32400/status/sessions/history/all?accountId={accountID}&librarySectionID={librarySectionID}&X-Plex-Token="
+    url = f"http://{ipaddress}:32400/status/sessions/history/all?accountId={accountID}&librarySectionID={librarySectionID}&X-Plex-Token="
     history_response = get_plex_response(url, token)
 
     return history_response
 
-def print_watch_history(token: str, librarySectionID: str) -> None: 
+def print_watch_history(ipaddress: str, token: str, librarySectionID: str) -> None: 
     user_str = get_user_selection()
 
     if user_str == "mine":
-        watch_history_response = get_watch_history(token, 1, librarySectionID)
+        watch_history_response = get_watch_history(ipaddress, token, 1, librarySectionID)
         root = ET.fromstring(watch_history_response.content)
         
         movies = []
